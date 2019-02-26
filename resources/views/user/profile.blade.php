@@ -9,17 +9,18 @@
 
             <div class="card">
                 <div class="card-header">Account information</div>
-                <div class="row text-center">
-                    <div class="container-avatar">
-                    <a href="#aboutModal" data-toggle="modal" data-target="#myModal">
+                <div class="card-body text-center">
+                    <blockquote class="blockquote mb-0">
+                        <a href="#aboutModal" data-toggle="modal" data-target="#myModal">
                         @if($user->image)
                         <img src="{{ route('user.avatar',['filename'=>$user->image]) }}" class="avatar" />
+                        @else
+                        <img src="{{ asset('img/default.png') }}" class="avatar" />
                         @endif
                     </a>
-                    </div>
-
                     <h3>{{ $user->name }}</h3>
                     <em>click my face for more</em>
+                    </blockquote>
                 </div>
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -35,7 +36,12 @@
                                     <div class="col-lg-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <center class="m-t-30"> <img src="{{ route('user.avatar',['filename'=>$user->image]) }}" class="img-circle" width="150">
+                                                <center class="m-t-30">
+                                                    @if($user->image)
+                                                    <img src="{{ route('user.avatar',['filename'=>$user->image]) }}" class="img-circle" width="150">
+                                                    @else
+                                                    <img src="{{ asset('img/default.png') }}" class="img-circle" width="150">
+                                                    @endif
                                                     <h4 class="card-title m-t-10">{{ $user->name }}</h4>
                                                     <h6 class="card-subtitle">Accoubts Manager Amix corp</h6>
                                                 </center>
