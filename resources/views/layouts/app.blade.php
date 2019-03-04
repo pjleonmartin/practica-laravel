@@ -10,10 +10,10 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Scripts -->
-        <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="{{ asset('js/app.js') }}"></script>
         <script src="https://www.google.com/recaptcha/api.js"></script>
-        <script src="{{ asset('../vendor/unisharp/laravel-ckeditor/ckeditor.js') }}"></script>
-
+        <script src="https://cdn.ckeditor.com/4.11.3/standard/ckeditor.js"></script>
+        
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
@@ -55,7 +55,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('user.curriculumvitae') }}">
+                            <a class="nav-link" href="{{ route('user.curriculum') }}">
                                 <i class="fas fa-file-invoice"></i>
                                 Curriculum Vitae
                                 <span class="sr-only">(current)</span>
@@ -105,6 +105,6 @@
                 @yield('content')
             </main>
         </div>
+        @yield('js')
     </body>
-    @yield('js')
 </html>

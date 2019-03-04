@@ -24,8 +24,6 @@ Route::get('/profile', 'UserController@configuration')->name('user.configuration
 Route::get('/profile/{id}', 'UserController@profile')->name('user.profile');
 Route::get('profile/avatar/{filename}', 'UserController@getImage')->name('user.avatar');
 Route::post('/profile/update', 'UserController@update')->name('user.update');
-Route::get('/profile/curriculumvitae', 'UserController@curriculumvitae')->name('user.curriculumvitae');
-Route::post('/profile/curriculumvitae/update', 'UserController@curriculumvitae_update')->name('user.curriculumvitae_update');
 // ADMIN
 Route::get('/admin/editprofile/{id}', 'UserController@admin_editprofile')->name('user.admin_editprofile');
 Route::post('/admin/editprofile/update', 'UserController@admin_updateprofile')->name('user.admin_updateprofile');
@@ -43,3 +41,9 @@ Route::get('/message/sent', 'MessageController@message_sent')->name('message.sen
 Route::get('/message/write', 'MessageController@message_write')->name('message.form');
 Route::post('/message/send', 'MessageController@send')->name('message.send');
 Route::get('/message/delete/{id}', 'MessageController@delete')->name('message.delete');
+// Curriculum
+Route::get('/curriculum/edit', 'UserController@curriculum')->name('user.curriculum');
+Route::post('/curriculum/edit/update', 'UserController@curriculum_update')->name('user.curriculum_update');
+// PDF
+Route::get('/pdf/lists', 'UserController@pdflists')->name('pdf.lists');
+Route::get('/pdf/lists/activeusers', 'UserController@pdf_activeusers')->name('pdf.activeusers');

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use App\User;
+use PDF;
 
 class UserController extends Controller {
 
@@ -273,14 +274,27 @@ class UserController extends Controller {
         }
     }
 
-    public function curriculumvitae() {
-        return view('user.curriculumvitae');
+    public function curriculum() {
+
+        return view('user.curriculum');
     }
-    
-    public function curriculumvitae_update() {
-        
+
+    public function curriculum_update(Request $request) {
+
+        // Recogemos el contenido del formulario
+        $content = $request->input('content');
+
+        // Cogemos el usuario que modificará su currículum
+        $user = \Auth::user();
+        $user->curriculum = $content;
+
+        // Actualizamos al usuario
+        $user->update();
+
+        return redirect()->route('user.curriculum')
+                        ->with(['message_success' => 'Your curriculum vitae has been successfully updated']);
     }
-    
+
     public function logs() {
         if (\Auth::user()->role == 'admin') {
 
@@ -288,6 +302,29 @@ class UserController extends Controller {
 
             return view('user.logs', ['logs' => $logs]);
         } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function pdflists() {
+        if (\Auth::user()->role == 'admin') {
+            return view('pdf.lists');
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function pdf_activeusers() {
+        if (\Auth::user()->role == 'admin') {
+            $data = array('users' => User::where('active', FALSE));
+            
+            $pdf = PDF::loadView('pdf.userlist', $data);
+
+            return $pdf->download('active_users.pdf');
+        } else {
+
             return redirect()->route('home')
                             ->with(['message_error' => 'You are not authorized']);
         }
