@@ -11,6 +11,8 @@
 
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script src="{{ asset('../vendor/unisharp/laravel-ckeditor/ckeditor.js') }}"></script>
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -32,7 +34,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('home') }}">
                                 <i class="fa fa-home"></i>
                                 Home
@@ -50,6 +52,14 @@
                                 <a class="dropdown-item" href="{{ route('message.received') }}">My Messages <span class="badge badge-danger">{{ count(Auth::user()->msg_received) }}</span></a>
                                 <a class="dropdown-item" href="{{ route('message.sent') }}">Messages sent</a>
                             </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('user.curriculumvitae') }}">
+                                <i class="fas fa-file-invoice"></i>
+                                Curriculum Vitae
+                                <span class="sr-only">(current)</span>
+                            </a>
                         </li>
                         @endif
                     </ul>
@@ -78,6 +88,9 @@
                                 <a class="dropdown-item" href="{{ route('user.configuration') }}">
                                     <i class="fas fa-user"></i> Profile
                                 </a>
+                                <a class="dropdown-item" href="{{ route('user.admin_panel') }}">
+                                    <i class="fas fa-unlock-alt"></i> Admin Panel
+                                </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
@@ -93,4 +106,5 @@
             </main>
         </div>
     </body>
+    @yield('js')
 </html>

@@ -4,82 +4,293 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use App\User;
 
-class UserController extends Controller
-{
-    
+class UserController extends Controller {
+
     public function __construct() {
         $this->middleware('auth');
     }
-    
+
+    public function create() {
+        if (\Auth::user()->role == 'admin') {
+            return view('user.create');
+        } else {
+            return redirect()->route('home')
+                            ->with(['message' => 'You are not authorized']);
+        }
+    }
+
+    public function insert(Request $request) {
+        if (\Auth::user()->role == 'admin') {
+            // Validación de formulario
+            $validate = $this->validate($request, [
+                'name' => 'required|string|max:255',
+                'surname' => 'required|string|max:255',
+                'nick' => 'required|string|max:255|unique:users,nick',
+                'email' => 'required|string|email|max:255|unique:users,email'
+            ]);
+
+            // Recoger datos del formulario
+            $name = $request->input('name');
+            $surname = $request->input('surname');
+            $nick = $request->input('nick');
+            $email = $request->input('email');
+            $password = $request->input('password');
+
+            // Asignar nuevos valores al nuevo objeto de usuario
+            $user = new User();
+            $user->name = $name;
+            $user->surname = $surname;
+            $user->nick = $nick;
+            $user->email = $email;
+            $user->password = Hash::make($password);
+
+            // Ejecutar consulta y cambios en la base de datos
+            $user->save();
+
+            DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
+                ':Param1' => \Auth::user()->nick,
+                ':Param2' => \Auth::user()->role,
+                ':Param3' => 'User ' . $user->nick . ' has been created by an administrator'
+            ]);
+
+            return redirect()->route('user.create')
+                            ->with(['message_success' => 'The user has been successfully created']);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function active_list() {
+        if (\Auth::user()->role == 'admin') {
+            $users = User::where('active', TRUE)
+                    ->paginate(5);
+
+            return view('user.list', ['users' => $users]);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function inactive_list() {
+        if (\Auth::user()->role == 'admin') {
+            $users = User::where('active', FALSE)
+                    ->paginate(5);
+
+            return view('user.list', ['users' => $users]);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function admin_panel() {
+        if (\Auth::user()->role == 'admin') {
+            return view('user.adminpanel');
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
     public function configuration() {
         return view('user.configuration');
     }
-    
-    public function profile($id) {
-        
-        $user = User::find($id);
-        if($user != null)
-        {
-            return view('user.profile', ['user' => $user]);
+
+    public function admin_editprofile($id) {
+        if (\Auth::user()->role == 'admin') {
+            $user = User::find($id);
+            if ($user != null) {
+                return view('user.editprofile', ['user' => $user]);
+            } else {
+                return redirect()->route('home');
+            }
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
         }
-        else
-        {
+    }
+
+    public function profile($id) {
+
+        $user = User::find($id);
+        if ($user != null) {
+            return view('user.profile', ['user' => $user]);
+        } else {
             return redirect()->route('home');
         }
     }
-    
+
     public function update(Request $request) {
-        
+
         // Conseguir usuario identificado
         $user = \Auth::user();
         $id = $user->id;
-        
+
         // Validación de formulario
         $validate = $this->validate($request, [
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'nick' => 'required|string|max:255|unique:users,nick,'.$id,
-            'email' => 'required|string|email|max:255|unique:users,email,'.$id
+            'nick' => 'required|string|max:255|unique:users,nick,' . $id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id
         ]);
-           
+
         // Recoger datos del formulario
         $name = $request->input('name');
         $surname = $request->input('surname');
         $nick = $request->input('nick');
         $email = $request->input('email');
-        
+
         // Asignar nuevos valores al objeto de usuario
         $user->name = $name;
         $user->surname = $surname;
         $user->nick = $nick;
         $user->email = $email;
-        
+
         // Subir la imagen
         $image_path = $request->file('image_path');
-        if($image_path) {
+        if ($image_path) {
             // Poner nombre único
-            $image_path_full = time().$image_path->getClientOriginalName();
-            
+            $image_path_full = time() . $image_path->getClientOriginalName();
+
             // Guardar en la carpeta storage (storage/app/users)
             Storage::disk('users')->put($image_path_full, File::get($image_path));
-            
+
             // Modificar la variable imag_path al nombre de la imagen nueva
             $user->image = $image_path_full;
         }
-        
+
         // Ejecutar consulta y cambios en la base de datos
         $user->update();
-        
+
+        DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
+            ':Param1' => \Auth::user()->nick,
+            ':Param2' => \Auth::user()->role,
+            ':Param3' => 'User ' . $user->nick . ' updated his own profile'
+        ]);
+
         return redirect()->route('user.profile')
-                ->with(['message'=> 'Usuario actualizado correctamente']);
+                        ->with(['message_success' => 'Your profile has been updated succesfully']);
     }
-    
+
+    public function admin_updateprofile(Request $request) {
+
+        // Conseguir datos del usuario al que modificamos en el formulario a partir del id
+        $id = $request->input('id');
+        $user = User::find($id);
+
+        // Validación de formulario
+        $validate = $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
+            'nick' => 'required|string|max:255|unique:users,nick,' . $id,
+            'role' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id
+        ]);
+
+        // Recoger datos del formulario
+        $name = $request->input('name');
+        $surname = $request->input('surname');
+        $nick = $request->input('nick');
+        $role = $request->input('role');
+        $email = $request->input('email');
+
+        // Asignar nuevos valores al objeto de usuario
+        $user->name = $name;
+        $user->surname = $surname;
+        $user->nick = $nick;
+        $user->role = $role;
+        $user->email = $email;
+
+        // Subir la imagen
+        $image_path = $request->file('image_path');
+        if ($image_path) {
+            // Poner nombre único
+            $image_path_full = time() . $image_path->getClientOriginalName();
+
+            // Guardar en la carpeta storage (storage/app/users)
+            Storage::disk('users')->put($image_path_full, File::get($image_path));
+
+            // Modificar la variable imag_path al nombre de la imagen nueva
+            $user->image = $image_path_full;
+        }
+
+        // Ejecutar consulta y cambios en la base de datos
+        $user->update();
+
+        DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
+            ':Param1' => \Auth::user()->nick,
+            ':Param2' => \Auth::user()->role,
+            ':Param3' => 'User ' . $user->nick . ' has been updated'
+        ]);
+
+        return redirect()->route('user.admin_editprofile', ['id' => $id])
+                        ->with(['message_success' => 'This profile has been updated successfully']);
+    }
+
     public function getImage($filename) {
         $file = Storage::disk('users')->get($filename);
         return new Response($file, 200);
     }
+
+    public function delete($id) {
+        if (\Auth::user()->role == 'admin') {
+            $user = User::find($id);
+            $user->delete();
+
+            DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
+                ':Param1' => \Auth::user()->nick,
+                ':Param2' => \Auth::user()->role,
+                ':Param3' => 'User ' . $user->nick . ' has been deleted'
+            ]);
+
+            return redirect()->route('home')
+                            ->with(['message_success' => 'The user has been successfully deleted']);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function activate($id) {
+        if (\Auth::user()->role == 'admin') {
+            $user = User::find($id);
+            $user->active = TRUE;
+            $user->update();
+
+            return redirect()->route('user.active_list')
+                            ->with(['message_success' => 'The user has been successfully activated']);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function curriculumvitae() {
+        return view('user.curriculumvitae');
+    }
+    
+    public function curriculumvitae_update() {
+        
+    }
+    
+    public function logs() {
+        if (\Auth::user()->role == 'admin') {
+
+            $logs = DB::table('logs')->paginate(5);
+
+            return view('user.logs', ['logs' => $logs]);
+        } else {
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
 }

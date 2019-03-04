@@ -95,3 +95,74 @@
 .modal-confirm .btn-danger:hover, .modal-confirm .btn-danger:focus {
     background: #ee3535;
 }
+
+.square {
+	padding: 100px;
+	margin: 30px 0px 0px 0px;
+}
+.yellow-bg{
+	background-color: #f8bc3b;
+}
+.green-bg {
+	background-color:#27ae60;
+}
+.gray-bg {
+	background-color:#3a3a3a;
+}
+.white-bg {
+	background-color:#fff;
+}
+
+.orange-bg {
+	background-color:#db5940;
+}
+
+.lightyellow-bg {
+	background-color:#fec400;
+}
+
+.lightblue-bg {
+	background-color:#7ecefd;
+}
+
+.cyan-bg {
+	background-color:#d1e1ed;
+}
+
+.darkblue-bg {
+	background-color:#2c3e50;
+}
+
+.black-bg {
+	background-color:#1f1f1f;
+}
+
+.blue-bg {
+	background-color:#028ca6;
+}
+
+.img_admin {
+	width: 50%;
+	height: 50%;
+}
+
+#admin {
+	text-align:center;
+}
+
+#admin h2 {
+	color:#ffffff;
+	letter-spacing: 4px;
+	font-size:3em;
+	font-weight:600;
+	line-height:50px;
+	padding: 25px 0px 10px 0px;
+}
+
+#admin p {
+	font-size: 24px;
+        font-weight: 600;
+        line-height:50px;
+	margin: 0px 0px 20px 0px;
+	color: #96EABA;
+}

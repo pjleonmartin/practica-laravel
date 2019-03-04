@@ -5,8 +5,6 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            @include('includes.message')
-
             <div class="card">
                 <div class="card-header">Account information</div>
                 <div class="card-body text-center">
@@ -50,9 +48,11 @@
                                                 <hr> </div>
                                             <div class="card-body"> <small class="text-muted">Full name</small>
                                                 <h6>{{ $user->name . ' ' . $user->surname }}</h6> <small class="text-muted">Nickname </small>
-                                                <h6>{{ $user->nick }}</h6> <small class="text-muted">Email address </small>
+                                                <h6>{{ $user->nick }}</h6> <small class="text-muted">Role </small>
+                                                <h6>{{ $user->role }}</h6> <small class="text-muted">Email address </small>
                                                 <h6>{{ $user->email }}</h6> <small class="text-muted">Join date </small>
-                                                <h6>{{ $user->created_at }}</h6>
+                                                <h6>{{ $user->created_at }}</h6>  <small class="text-muted">Activated </small>
+                                                <h6>{{ $user->active }}</h6>
                                             </div>
                                         </div>
                                     </div>
