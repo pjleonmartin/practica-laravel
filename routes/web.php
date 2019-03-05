@@ -22,7 +22,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 // Profile & User
 Route::get('/profile', 'UserController@configuration')->name('user.configuration');
 Route::get('/profile/{id}', 'UserController@profile')->name('user.profile');
-Route::get('profile/avatar/{filename}', 'UserController@getImage')->name('user.avatar');
+Route::get('/profile/avatar/{filename}', 'UserController@getImage')->name('user.avatar');
 Route::post('/profile/update', 'UserController@update')->name('user.update');
 // ADMIN
 Route::get('/admin/editprofile/{id}', 'UserController@admin_editprofile')->name('user.admin_editprofile');
@@ -49,3 +49,4 @@ Route::get('/pdf/lists', 'UserController@pdflists')->name('pdf.lists');
 Route::get('/pdf/lists/activeusers', 'UserController@pdf_activeusers')->name('pdf.activeusers');
 Route::get('/pdf/lists/inactiveusers', 'UserController@pdf_inactiveusers')->name('pdf.inactiveusers');
 Route::get('/pdf/lists/serverlogs', 'UserController@pdf_logs')->name('pdf.logs');
+Route::get('/pdf/curriculum/user/{id}', 'UserController@pdf_curriculum')->name('pdf.curriculum');

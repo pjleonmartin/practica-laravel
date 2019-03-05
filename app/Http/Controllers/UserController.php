@@ -33,6 +33,7 @@ class UserController extends Controller {
                 'name' => 'required|string|max:255',
                 'surname' => 'required|string|max:255',
                 'nick' => 'required|string|max:255|unique:users,nick',
+                'phonenumber' => 'required|min:9|max:9|numeric',
                 'email' => 'required|string|email|max:255|unique:users,email'
             ]);
 
@@ -40,6 +41,7 @@ class UserController extends Controller {
             $name = $request->input('name');
             $surname = $request->input('surname');
             $nick = $request->input('nick');
+            $phonenumber = $request->input('phonenumber');
             $email = $request->input('email');
             $password = $request->input('password');
 
@@ -48,6 +50,7 @@ class UserController extends Controller {
             $user->name = $name;
             $user->surname = $surname;
             $user->nick = $nick;
+            $user->phonenumber = $phonenumber;
             $user->email = $email;
             $user->password = Hash::make($password);
 
@@ -140,6 +143,7 @@ class UserController extends Controller {
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
             'nick' => 'required|string|max:255|unique:users,nick,' . $id,
+            'phonenumber' => 'required|min:9|max:9|numeric',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id
         ]);
 
@@ -147,12 +151,14 @@ class UserController extends Controller {
         $name = $request->input('name');
         $surname = $request->input('surname');
         $nick = $request->input('nick');
+        $phonenumber = $request->input('phonenumber');
         $email = $request->input('email');
 
         // Asignar nuevos valores al objeto de usuario
         $user->name = $name;
         $user->surname = $surname;
         $user->nick = $nick;
+        $user->phonenumber = $phonenumber;
         $user->email = $email;
 
         // Subir la imagen
@@ -192,6 +198,7 @@ class UserController extends Controller {
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
             'nick' => 'required|string|max:255|unique:users,nick,' . $id,
+            'phonenumber' => 'required|min:9|max:9|numeric',
             'role' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id
         ]);
@@ -200,6 +207,7 @@ class UserController extends Controller {
         $name = $request->input('name');
         $surname = $request->input('surname');
         $nick = $request->input('nick');
+        $phonenumber = $request->input('phonenumber');
         $role = $request->input('role');
         $email = $request->input('email');
 
@@ -207,6 +215,7 @@ class UserController extends Controller {
         $user->name = $name;
         $user->surname = $surname;
         $user->nick = $nick;
+        $user->phonenumber = $phonenumber;
         $user->role = $role;
         $user->email = $email;
 
@@ -351,6 +360,22 @@ class UserController extends Controller {
             $pdf = PDF::loadView('pdf.logs', compact('logs'));
 
             return $pdf->stream('server-logs.pdf');
+        } else {
+
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function pdf_curriculum($id) {
+        if (\Auth::user()->role == 'admin') {
+            $user = User::find($id);
+            
+            $curriculum = $user->curriculum;
+
+            $pdf = PDF::loadHTML($curriculum);
+
+            return $pdf->stream('curriculum.pdf');
         } else {
 
             return redirect()->route('home')

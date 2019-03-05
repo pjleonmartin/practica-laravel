@@ -35,4 +35,7 @@ use AuthenticatesUsers;
     {
         $this->middleware('guest')->except('logout');
     }
+        public function login() {
+        
+    }
 }

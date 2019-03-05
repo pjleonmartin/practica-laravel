@@ -10,6 +10,7 @@
                 <tr>
                     <th>Avatar</th>
                     <th>Full name</th>
+                    <th>Phone Number</th>
                     <th>Role</th>
                     <th>E-Mail</th>
                 </tr>
@@ -25,6 +26,7 @@
                         @endif
                     </td>
                     <td>{{ $user->name . ' ' . $user->surname }}</td>
+                    <td>{{ '+34' . $user->phonenumber }}</td>
                     <td>{{ $user->role }}</td>
                     <td>{{ $user->email }}</td>
                 </tr>

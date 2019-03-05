@@ -46,7 +46,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                <a href="#myModal" class="btn btn-danger" data-toggle="modal">Delete</a>
+                                <a href="#myModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></a>
                                 </td>
                             </tr>
                             @endforeach

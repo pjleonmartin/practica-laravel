@@ -36,9 +36,9 @@
                                             <div class="card-body">
                                                 <center class="m-t-30">
                                                     @if($user->image)
-                                                    <img src="{{ route('user.avatar',['filename'=>$user->image]) }}" class="img-circle" width="150">
+                                                    <img src="{{ route('user.avatar',['filename'=>$user->image]) }}" class="img-circle" width="150px" height="150px">
                                                     @else
-                                                    <img src="{{ asset('img/default.png') }}" class="img-circle" width="150">
+                                                    <img src="{{ asset('img/default.png') }}" class="img-circle" width="150px" height="150px">
                                                     @endif
                                                     <h4 class="card-title m-t-10">{{ $user->name }}</h4>
                                                     <h6 class="card-subtitle">Accoubts Manager Amix corp</h6>
@@ -48,7 +48,8 @@
                                                 <hr> </div>
                                             <div class="card-body"> <small class="text-muted">Full name</small>
                                                 <h6>{{ $user->name . ' ' . $user->surname }}</h6> <small class="text-muted">Nickname </small>
-                                                <h6>{{ $user->nick }}</h6> <small class="text-muted">Role </small>
+                                                <h6>{{ $user->nick }}</h6> <small class="text-muted">Phone Number </small>
+                                                <h6>{{ '+34 ' . $user->phonenumber }}</h6> <small class="text-muted">Role </small>
                                                 <h6>{{ $user->role }}</h6> <small class="text-muted">Email address </small>
                                                 <h6>{{ $user->email }}</h6> <small class="text-muted">Join date </small>
                                                 <h6>{{ $user->created_at }}</h6>  <small class="text-muted">Activated </small>
@@ -59,6 +60,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <center>
+                                        <a href="{{ route('pdf.curriculum', ['id' => $user->id]) }}" target="_blank" role="button" class="btn btn-info">Curriculum PDF</a>
                                         <button type="button" class="btn btn-info" data-dismiss="modal">I've heard enough about {{ $user->name }}</button>
                                     </center>
                                 </div>

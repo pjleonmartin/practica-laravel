@@ -88,9 +88,11 @@
                                 <a class="dropdown-item" href="{{ route('user.configuration') }}">
                                     <i class="fas fa-user"></i> Profile
                                 </a>
+                                @if(Auth::user()->role == 'admin')
                                 <a class="dropdown-item" href="{{ route('user.admin_panel') }}">
                                     <i class="fas fa-unlock-alt"></i> Admin Panel
                                 </a>
+                                @endif
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
