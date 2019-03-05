@@ -283,6 +283,22 @@ class UserController extends Controller {
         }
     }
 
+    public function search($search = null) {
+
+        if (!empty($search)) {
+            $users = User::where('nick', 'LIKE', '%' . $search . '%')
+                    ->orWhere('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('surname', 'LIKE', '%' . $search . '%')
+                    ->orderBy('id', 'desc')
+                    ->paginate(5);
+        } else {
+            $users = User::orderBy('id', 'desc')->paginate(5);
+        }
+        return view('user.index', [
+            'users' => $users
+        ]);
+    }
+
     public function curriculum() {
 
         return view('user.curriculum');
@@ -370,7 +386,7 @@ class UserController extends Controller {
     public function pdf_curriculum($id) {
         if (\Auth::user()->role == 'admin') {
             $user = User::find($id);
-            
+
             $curriculum = $user->curriculum;
 
             $pdf = PDF::loadHTML($curriculum);
