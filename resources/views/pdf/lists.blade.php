@@ -12,8 +12,8 @@
 
                 <div class="card-body">
                     <a href="{{ route('pdf.activeusers') }}" role="button" class="btn btn-outline-primary">PDF list with active users</a>
-                    <a href="#" role="button" class="btn btn-outline-primary">PDF list with inactive users</a>
-                    <a href="#" role="button" class="btn btn-outline-primary">PDF list with server log</a>
+                    <a href="{{ route('pdf.inactiveusers') }}" role="button" class="btn btn-outline-primary">PDF list with inactive users</a>
+                    <a href="{{ route('pdf.logs') }}" role="button" class="btn btn-outline-primary">PDF list with server log</a>
                 </div>
             </div>
         </div>

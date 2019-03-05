@@ -318,11 +318,39 @@ class UserController extends Controller {
 
     public function pdf_activeusers() {
         if (\Auth::user()->role == 'admin') {
-            $data = array('users' => User::where('active', FALSE));
-            
-            $pdf = PDF::loadView('pdf.userlist', $data);
+            $users = User::where('active', TRUE)->get();
 
-            return $pdf->download('active_users.pdf');
+            $pdf = PDF::loadView('pdf.userlist', compact('users'));
+
+            return $pdf->stream('active-users.pdf');
+        } else {
+
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function pdf_inactiveusers() {
+        if (\Auth::user()->role == 'admin') {
+            $users = User::where('active', FALSE)->get();
+
+            $pdf = PDF::loadView('pdf.userlist', compact('users'));
+
+            return $pdf->stream('inactive-users.pdf');
+        } else {
+
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function pdf_logs() {
+        if (\Auth::user()->role == 'admin') {
+            $logs = DB::table('logs')->get();
+
+            $pdf = PDF::loadView('pdf.logs', compact('logs'));
+
+            return $pdf->stream('server-logs.pdf');
         } else {
 
             return redirect()->route('home')

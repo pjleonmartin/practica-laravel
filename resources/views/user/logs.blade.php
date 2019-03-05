@@ -8,7 +8,7 @@
             @include('includes.message')  
 
             <div class="card">
-                <div class="card-header">User list requested</div>
+                <div class="card-header">Server log requested</div>
 
                 <div class="card-body">
                     <table class="table table-bordered table-hover">

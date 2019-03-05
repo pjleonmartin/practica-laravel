@@ -47,3 +47,5 @@ Route::post('/curriculum/edit/update', 'UserController@curriculum_update')->name
 // PDF
 Route::get('/pdf/lists', 'UserController@pdflists')->name('pdf.lists');
 Route::get('/pdf/lists/activeusers', 'UserController@pdf_activeusers')->name('pdf.activeusers');
+Route::get('/pdf/lists/inactiveusers', 'UserController@pdf_inactiveusers')->name('pdf.inactiveusers');
+Route::get('/pdf/lists/serverlogs', 'UserController@pdf_logs')->name('pdf.logs');
