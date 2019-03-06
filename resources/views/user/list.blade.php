@@ -4,9 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-
-            @include('includes.message')  
-
+            @include('includes.message')
             <div class="card">
                 <div class="card-header">User list requested</div>
 
@@ -22,7 +20,8 @@
                             @foreach($users as $user)
                             <tr>
                                 <td><a href="{{ route('user.profile',['id' => $user->id]) }}">{{ $user->name . ' ' . $user->surname }}</a></td>
-                                <td><div id="myModal" class="modal fade">
+                                <td>@if(Auth::user()->role == 'admin')
+                                    <div id="myModal" class="modal fade">
                                         <div class="modal-dialog modal-confirm">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -37,16 +36,18 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
-                                                    <button type="button" onClick="location.href='{{ route('user.delete', ['id' => $user->id]) }}'" class="btn btn-danger">Delete</button>
+                                                    <button type="button" onClick="location.href ='{{ route('user.delete', ['id' => $user->id]) }}'" class="btn btn-danger">Delete</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                <a href="#myModal" data-toggle="modal"><i class="fas fa-user-minus"></i></a>
-                                <a href="{{ route('user.admin_editprofile', ['id' => $user->id]) }}"><i class="fas fa-user-edit"></i></a>
-                                @if($user->active == FALSE)
-                                <a href="{{ route('user.activate', ['id' => $user->id]) }}"><i class="fas fa-user-check"></i></a>
-                                @endif
+                                    <a href="#myModal" data-toggle="modal"><i class="fas fa-user-minus"></i></a>
+                                    <a href="{{ route('user.admin_editprofile', ['id' => $user->id]) }}"><i class="fas fa-user-edit"></i></a>
+                                    @if($user->active == FALSE)
+                                    <a href="{{ route('user.activate', ['id' => $user->id]) }}"><i class="fas fa-user-check"></i></a>
+                                    @endif
+                                    @endif
+                                    <a href="{{ route('message.form', ['id' => $user->id]) }}"><i class="fas fa-envelope-square"></i></a>
                                 </td>
                             </tr>
                             @endforeach

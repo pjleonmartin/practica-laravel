@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use App\User;
 use PDF;
 
@@ -283,20 +284,27 @@ class UserController extends Controller {
         }
     }
 
-    public function search($search = null) {
+    public function search() {
+        return view('user.search');
+    }
 
-        if (!empty($search)) {
-            $users = User::where('nick', 'LIKE', '%' . $search . '%')
-                    ->orWhere('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('surname', 'LIKE', '%' . $search . '%')
-                    ->orderBy('id', 'desc')
-                    ->paginate(5);
-        } else {
-            $users = User::orderBy('id', 'desc')->paginate(5);
-        }
-        return view('user.index', [
-            'users' => $users
+    public function search_send(Request $request) {
+
+        // Conseguir datos del formulario
+        $criterion = $request->input('criterion');
+        $field = $request->input('field');
+
+        // Validación de formulario
+        $validate = $this->validate($request, [
+            'criterion' => 'required|string|max:255',
+            'field' => 'required|string'
         ]);
+
+        $users = User::where($field, 'LIKE', '%' . $criterion . '%')
+                ->where('active', TRUE)
+                ->paginate(5);
+
+        return view('user.list', ['users' => $users]);
     }
 
     public function curriculum() {
@@ -392,6 +400,59 @@ class UserController extends Controller {
             $pdf = PDF::loadHTML($curriculum);
 
             return $pdf->stream('curriculum.pdf');
+        } else {
+
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function mail_write() {
+        if (\Auth::user()->role == 'admin') {
+
+            $users = User::all();
+            return view('mail.form', ['users' => $users]);
+        } else {
+
+            return redirect()->route('home')
+                            ->with(['message_error' => 'You are not authorized']);
+        }
+    }
+
+    public function mail_send(Request $request) {
+        if (\Auth::user()->role == 'admin') {
+
+            // Validación de formulario
+            $validate = $this->validate($request, [
+                'subject' => 'required|string|max:255',
+                'message' => 'required|string|max:255',
+                'addressee' => 'required'
+            ]);
+
+            // Recogemos los datos del formulario
+            $data = ['content' => $request->input('message'), 'subject' => $request->input('subject'), 'addressee' => $request->input('addressee')];
+
+            Mail::send('mail.send', $data, function($mail) use($data) {
+                $mail->to($data['addressee'])
+                        ->subject($data['subject'])
+                        ->from('iessansebastian.servidor@gmail.com', 'Laravel Application - Admin ('. \Auth::user()->nick . ')')
+                        ->sender('iessansebastian.servidor@gmail.com', 'Laravel Application - Admin ('. \Auth::user()->nick . ')')
+                        ->replyTo('iessansebastian.servidor@gmail.com', 'Laravel Application - Admin ('. \Auth::user()->nick . ')');
+            });
+
+            if (Mail::failures()) {
+                return redirect()->route('mail.form')
+                                ->with(['message_error' => 'The e-mail has not been delivered']);
+            } else {
+                DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
+                    ':Param1' => \Auth::user()->nick,
+                    ':Param2' => \Auth::user()->role,
+                    ':Param3' => 'E-Mail sent to' . $data['addressee']
+                ]);
+
+                return redirect()->route('mail.form')
+                                ->with(['message_success' => 'The e-mail has been successfully delivered to its addressee']);
+            }
         } else {
 
             return redirect()->route('home')

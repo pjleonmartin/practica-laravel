@@ -38,7 +38,7 @@ Route::get('/admin/logs', 'UserController@logs')->name('user.logs');
 // Message
 Route::get('/message/received', 'MessageController@message_received')->name('message.received');
 Route::get('/message/sent', 'MessageController@message_sent')->name('message.sent');
-Route::get('/message/write', 'MessageController@message_write')->name('message.form');
+Route::get('/message/write/{id?}', 'MessageController@message_write')->name('message.form');
 Route::post('/message/send', 'MessageController@send')->name('message.send');
 Route::get('/message/delete/{id}', 'MessageController@delete')->name('message.delete');
 // Curriculum
@@ -50,3 +50,9 @@ Route::get('/pdf/lists/activeusers', 'UserController@pdf_activeusers')->name('pd
 Route::get('/pdf/lists/inactiveusers', 'UserController@pdf_inactiveusers')->name('pdf.inactiveusers');
 Route::get('/pdf/lists/serverlogs', 'UserController@pdf_logs')->name('pdf.logs');
 Route::get('/pdf/curriculum/user/{id}', 'UserController@pdf_curriculum')->name('pdf.curriculum');
+// Search
+Route::get('/search', 'UserController@search')->name('user.search');
+Route::post('/search/send', 'UserController@search_send')->name('user.search_send');
+// Mail
+Route::get('/mail/write', 'UserController@mail_write')->name('mail.form');
+Route::post('/mail/send', 'UserController@mail_send')->name('mail.send');

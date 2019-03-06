@@ -61,9 +61,8 @@
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('user.curriculum') }}">
+                            <a class="nav-link" href="{{ route('user.search') }}">
                                 <i class="fas fa-search"></i>
                                 Search for people
                                 <span class="sr-only">(current)</span>

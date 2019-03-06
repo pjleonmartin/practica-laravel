@@ -26,9 +26,14 @@ class MessageController extends Controller {
         return view('message.sent', ['messages' => $messages]);
     }
 
-    public function message_write() {
-        $users = User::all();
-
+    public function message_write($id = null) {
+        if(empty($id)) {
+            $users = User::all();
+        }
+        else {
+            $users = User::all()
+                    ->where('id', $id);
+        }
         return view('message.form', ['users' => $users]);
     }
 
