@@ -447,7 +447,7 @@ class UserController extends Controller {
                 DB::select(DB::raw("CALL add_log (:Param1, :Param2, :Param3)"), [
                     ':Param1' => \Auth::user()->nick,
                     ':Param2' => \Auth::user()->role,
-                    ':Param3' => 'E-Mail sent to' . $data['addressee']
+                    ':Param3' => 'E-Mail sent to ' . $data['addressee']
                 ]);
 
                 return redirect()->route('mail.form')

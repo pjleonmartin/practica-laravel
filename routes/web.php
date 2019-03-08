@@ -1,18 +1,25 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+  |--------------------------------------------------------------------------
+  | Web Routes
+  |--------------------------------------------------------------------------
+  |
+  | Here is where you can register web routes for your application. These
+  | routes are loaded by the RouteServiceProvider within a group which
+  | contains the "web" middleware group. Now create something great!
+  |
+ */
 
 Route::get('/', function () {
-    return view('welcome');
+    $check = "";
+    try {
+        $check = \Schema::hasTable('users');
+        return view('welcome');
+    } catch (Exception $e) {
+        return redirect()->route('install.form')
+                        ->with(['message_error' => 'You must install the application before using it']);
+    }
 });
 
 Auth::routes();
@@ -56,3 +63,6 @@ Route::post('/search/send', 'UserController@search_send')->name('user.search_sen
 // Mail
 Route::get('/mail/write', 'UserController@mail_write')->name('mail.form');
 Route::post('/mail/send', 'UserController@mail_send')->name('mail.send');
+// Install
+Route::get('/install', 'InstallController@install_form')->name('install.form');
+Route::post('/install/send', 'InstallController@install')->name('install.send');
